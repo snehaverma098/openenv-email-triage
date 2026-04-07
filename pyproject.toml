@@ -1,0 +1,22 @@
+[project]
+name = "openenv-email-triage"
+version = "0.1.0"
+description = "Email Triage environment where an agent processes incoming emails."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "openenv-core",
+    "openai",
+    "pydantic",
+    "fastapi",
+    "uvicorn"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
