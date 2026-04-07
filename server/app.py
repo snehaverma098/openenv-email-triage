@@ -10,9 +10,19 @@ def read_root():
     return {"message": "Email Triage OpenEnv is running!"}
 
 @app.post("/reset")
-async def reset():
+async def reset(request: Request):
     global env
-    env = EmailTriageEnv()
+    import os
+    try:
+        data = await request.json()
+        task = data.get("task")
+    except:
+        task = None
+        
+    if not task:
+        task = os.getenv("EMAIL_TRIAGE_TASK") or os.getenv("OPENENV_TASK") or "vip_triage"
+        
+    env = EmailTriageEnv(task=task)
     res = await env.reset()
     return res.model_dump()
 
