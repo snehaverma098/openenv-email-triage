@@ -1,0 +1,14 @@
+name: email_triage
+description: "Email Triage environment where an agent processes incoming emails."
+version: "0.1.0"
+owner: user
+module: email_triage
+class_name: EmailTriageEnv
+
+tasks:
+  - id: vip_triage
+    description: "Read the inbox and flag the VIP email."
+  - id: inbox_zero
+    description: "Archive spam, reply to support, archive the rest."
+  - id: multi_step
+    description: "Forward billing thread to billing department."
