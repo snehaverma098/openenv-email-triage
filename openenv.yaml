@@ -8,7 +8,13 @@ class_name: EmailTriageEnv
 tasks:
   - id: vip_triage
     description: "Read the inbox and flag the VIP email."
+    grader: true
+    has_grader: true
   - id: inbox_zero
     description: "Archive spam, reply to support, archive the rest."
+    grader: true
+    has_grader: true
   - id: multi_step
     description: "Forward billing thread to billing department."
+    grader: true
+    has_grader: true
