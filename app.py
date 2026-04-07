@@ -1,6 +1,6 @@
 import json
 from fastapi import FastAPI, Request
-from email_triage import EmailTriageEnv, EmailTriageAction
+from email_triage import EmailTriageEnv, Action as EmailTriageAction
 
 app = FastAPI()
 env = EmailTriageEnv()
