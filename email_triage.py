@@ -104,32 +104,31 @@ class EmailTriageEnv:
     def _calculate_reward(self) -> tuple[float, bool]:
         if self.task_name == "vip_triage":
             flagged_vip = any(e.id == "1" for e in self.flagged)
-            if flagged_vip: return 1.0, True
-            elif self.step_count >= self.max_steps: return 0.0, True
-            else: return 0.5 if self.current_email and self.current_email.id == "1" else 0.0, False
+            if flagged_vip: return 0.99, True
+            elif self.step_count >= self.max_steps: return 0.01, True
+            else: return 0.5 if self.current_email and self.current_email.id == "1" else 0.01, False
 
         elif self.task_name == "inbox_zero":
-            score = 0.0
-            if any(e.id == "1" for e in self.archived): score += 0.33
-            if "2" in self.replied: score += 0.33
-            if any(e.id == "3" for e in self.archived): score += 0.34
+            score = 0.01
+            if any(e.id == "1" for e in self.archived): score += 0.32
+            if "2" in self.replied: score += 0.32
+            if any(e.id == "3" for e in self.archived): score += 0.32
             if "1" in self.replied: score -= 0.5
             
-            score = max(0.0, min(1.0, score))
+            score = max(0.01, min(0.99, score))
             done = len(self.emails) == 0 or self.step_count >= self.max_steps
-            if done and score >= 0.99: score = 1.0
             return score, done
             
         elif self.task_name == "multi_step":
-            score = 0.0
+            score = 0.01
             if "1" in self.forwarded and self.forwarded["1"] == "billing@company.com":
-                score += 1.0
+                score = 0.99
                 return score, True
             elif self.step_count >= self.max_steps:
                 return score, True
             return score, False
             
-        return 0.0, True
+        return 0.01, True
 
     async def step(self, action: Action) -> Result:
         self.step_count += 1

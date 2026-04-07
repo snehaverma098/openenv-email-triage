@@ -14,9 +14,8 @@ from openai import OpenAI
 from email_triage import Action as EmailTriageAction, EmailTriageEnv
 
 IMAGE_NAME = os.getenv("IMAGE_NAME")
-API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
-
-API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+API_KEY = os.environ.get("API_KEY") or os.environ.get("HF_TOKEN") or "dummy"
+API_BASE_URL = os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 TASK_NAME = os.getenv("EMAIL_TRIAGE_TASK", "vip_triage")
 BENCHMARK = os.getenv("EMAIL_TRIAGE_BENCHMARK", "email_triage")
@@ -147,9 +146,9 @@ async def main() -> None:
 
         score = sum(rewards) / float(MAX_STEPS) if MAX_STEPS > 0 else 0.0
         if result.reward >= 1.0: # Simplification: if final reward is 1.0, done
-            score = 1.0
+            score = 0.99
             
-        score = min(max(score, 0.0), 1.0)  # clamp to [0, 1]
+        score = min(max(score, 0.01), 0.99)  # clamp strictly to (0, 1)
         success = score >= SUCCESS_SCORE_THRESHOLD
 
     finally:
