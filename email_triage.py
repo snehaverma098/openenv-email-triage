@@ -48,7 +48,7 @@ class EmailTriageEnv(Environment[Action, Observation, EmailTriageState]):
     
     @classmethod
     async def from_docker_image(cls, image_name: Optional[str] = None, **kwargs):
-        task = os.getenv("EMAIL_TRIAGE_TASK", "vip_triage")
+        task = kwargs.get("task") or os.getenv("EMAIL_TRIAGE_TASK") or os.getenv("OPENENV_TASK") or "vip_triage"
         return cls(task=task)
 
     def __init__(self, task="vip_triage"):
