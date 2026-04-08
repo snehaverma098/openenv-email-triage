@@ -116,8 +116,8 @@ async def main() -> None:
     log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        result = await env.reset()
-        obs_str = str(result.observation)
+        result = env.reset()
+        obs_str = str(result)
 
         for step in range(1, MAX_STEPS + 1):
             if result.done:
@@ -126,12 +126,12 @@ async def main() -> None:
             action = get_model_action(client, step, obs_str, history)
             action_str = action.model_dump_json()
 
-            result = await env.step(action)
-            obs = result.observation
+            result = env.step(action)
+            obs = result
 
             reward = result.reward or 0.0
             done = result.done
-            error = result.error
+            error = result.metadata.get("error") if hasattr(result, "metadata") else None
 
             rewards.append(reward)
             steps_taken = step
@@ -145,7 +145,7 @@ async def main() -> None:
                 break
 
         score = sum(rewards) / float(MAX_STEPS) if MAX_STEPS > 0 else 0.0
-        if result.reward >= 1.0: # Simplification: if final reward is 1.0, done
+        if result.reward and result.reward >= 1.0: # Simplification: if final reward is 1.0, done
             score = 0.99
             
         score = min(max(score, 0.01), 0.99)  # clamp strictly to (0, 1)

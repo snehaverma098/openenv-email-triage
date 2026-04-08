@@ -1,43 +1,17 @@
-import json
-from fastapi import FastAPI, Request
-from email_triage import EmailTriageEnv, Action as EmailTriageAction
+import os
+from openenv.core.env_server import create_fastapi_app
+from email_triage import EmailTriageEnv, Action as EmailTriageAction, Observation as EmailTriageObservation
 
-app = FastAPI()
-env = EmailTriageEnv()
+def env_factory():
+    task = os.getenv("EMAIL_TRIAGE_TASK") or os.getenv("OPENENV_TASK") or "vip_triage"
+    return EmailTriageEnv(task=task)
 
-@app.get("/")
-def read_root():
-    return {"message": "Email Triage OpenEnv is running!"}
-
-@app.post("/reset")
-async def reset(request: Request):
-    global env
-    import os
-    try:
-        data = await request.json()
-        task = data.get("task")
-    except:
-        task = None
-        
-    if not task:
-        task = os.getenv("EMAIL_TRIAGE_TASK") or os.getenv("OPENENV_TASK") or "vip_triage"
-        
-    env = EmailTriageEnv(task=task)
-    res = await env.reset()
-    return res.model_dump()
-
-@app.post("/step")
-async def step(request: Request):
-    global env
-    data = await request.json()
-    action = EmailTriageAction(**data)
-    res = await env.step(action)
-    return res.model_dump()
-
-@app.get("/state")
-def state():
-    global env
-    return env.state()
+app = create_fastapi_app(
+    env=env_factory,
+    action_cls=EmailTriageAction,
+    observation_cls=EmailTriageObservation,
+    max_concurrent_envs=10
+)
 
 def main():
     import uvicorn
