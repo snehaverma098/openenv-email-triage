@@ -1,20 +1,31 @@
-name: email_triage
-description: "Email Triage environment where an agent processes incoming emails."
-version: "0.1.0"
-owner: user
-module: email_triage
 class_name: EmailTriageEnv
-
+description: Email Triage environment where an agent processes incoming emails.
+module: email_triage
+name: email_triage
+owner: user
 tasks:
-  - id: vip_triage
-    description: "Read the inbox and flag the VIP email."
-    grader: true
-    has_grader: true
-  - id: inbox_zero
-    description: "Archive spam, reply to support, archive the rest."
-    grader: true
-    has_grader: true
-  - id: multi_step
-    description: "Forward billing thread to billing department."
-    grader: true
-    has_grader: true
+- id: vip_triage
+  name: VIP Triage
+  description: Read the inbox and flag the VIP email.
+  difficulty: easy
+  max_steps: 10
+  reward_range: [0.0, 1.0]
+- id: inbox_zero
+  name: Inbox Zero
+  description: Archive spam, reply to support, archive the rest.
+  difficulty: medium
+  max_steps: 10
+  reward_range: [0.0, 1.0]
+- id: multi_step
+  name: Multi Step Forwarding
+  description: Forward billing thread to billing department.
+  difficulty: hard
+  max_steps: 10
+  reward_range: [0.0, 1.0]
+endpoints:
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  tasks: GET /tasks
+  grader: GET /grader
+version: 0.1.0
